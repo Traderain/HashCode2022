@@ -40,6 +40,17 @@ class Project:
         self.best_before = int(splt[3].strip())
         self.skillcount = int(splt[4].strip())
         
+class Schedule:
+    projectname = ""
+    workers = []
+
+    def __init__(self, workperson):
+        workers = []
+        self.projectname = workperson
+
+    def add_worker(self, worker):
+        self.workers.append(worker)
+    
 
 
 def main():
@@ -99,6 +110,20 @@ def main():
             print("\t" + project.name)
             for skill in project.neededskills:
                 print("\t\t" + skill.type + " " + str(skill.level))
+
+        finalschedule = []
+        for project in projects:
+            sch = Schedule(project.name)
+            finalschedule.append(sch)
+        
+        with open(fp + ".output", "w+") as fo:
+            fo.write(str(len(finalschedule)) + "\n")
+            for timing in finalschedule:
+                fo.write(timing.projectname + "\n")
+                for worker in timing.workers:
+                    fo.write(worker)
+                fo.write("\n")
+
 
         
         
