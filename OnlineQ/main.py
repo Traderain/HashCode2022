@@ -126,7 +126,7 @@ class Project:
         self.skillcount = int(splt[4].strip())
         self.status = PROJECT_OPEN
         self.roles = []
-        self.days_left = self.duration
+        self.days_left = 0
 
     def __repr__(self) -> str:
         return self.name + " (" + self.status + ")"
@@ -156,6 +156,9 @@ class Project:
         return self.status == PROJECT_OPEN
 
     def progress(self, days: int):
+        if days > self.days_left:
+            print("ok")
+
         self.days_left -= days
 
         if self.days_left == 0:
@@ -379,7 +382,7 @@ def calc_role_compositions(project: Project, contribs: List[Contributor]) -> Lis
 def main():
     lines = []
     #for fp in ['.\\OnlineQ\\input\\a_an_example.in.txt']:
-    for fp in ['.\\OnlineQ\\input\\b_better_start_small.in.txt']:
+    for fp in ['.\\OnlineQ\\input\\d_dense_schedule.in.txt']:
 
         start = time.time()
         with open(fp) as f:
@@ -457,14 +460,26 @@ def main():
                         for role in comp.roles:
                             avail_contribs.remove(role.contributor)
 
+                        break
+            
+            days = 9999999999999
             for project in current_projects:
-                project.progress(1)
+                days = min(days, project.days_left)
+
+            if len(current_projects) == 0:
+                break
+
+            print("Jumping " + str(days) + " days...")
+
+            for project in current_projects:
+                project.progress(days)
                 if project.status == PROJECT_DONE:
                     asd -= 1
 
-            print("Current: " + str(asd))
-            currentDay += 1
-            if currentDay > 300:
+            currentDay += days
+            print("Day " + str(currentDay) + " - projects: " + str(asd))
+
+            if currentDay > 5000:
                 break
     
         with open(fp + ".output", "w+") as fo:
